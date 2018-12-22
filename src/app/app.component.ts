@@ -52,7 +52,7 @@ export class AppComponent {
             console.log("login success " + JSON.stringify(payload));
             this.user = this.msalService.getUser();
 
-            if (this.msalService.getUser().idToken.hasOwnProperty('roles')) {
+            if (this.user.idToken.hasOwnProperty('roles')) {
                 this.roles = this.msalService.getUser().idToken['roles'];
                 console.log('Token Claims: ' + this.roles);
             }
