@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BroadcastService, MsalService } from '@azure/msal-angular';
 import { Subscription } from 'rxjs';
 import { User } from 'msal';
@@ -8,7 +8,7 @@ import { User } from 'msal';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.sass']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
 
     title = 'Msal Angular Demo';
     loggedIn: boolean;
@@ -26,14 +26,13 @@ export class AppComponent {
 
         if (this.msalService.getUser()) {
             this.loggedIn = true;
-        }
-        else {
+        } else {
             this.loggedIn = false;
         }
     }
 
     login() {
-        this.msalService.loginRedirect(["user.read", "profile", "api://39ea0629-0c83-4056-82a4-65e9d2d5443f/Claims.Any"]);
+        this.msalService.loginRedirect(['user.read', 'profile', 'api://39ea0629-0c83-4056-82a4-65e9d2d5443f/Claims.Any']);
     }
 
     logout() {
@@ -42,14 +41,14 @@ export class AppComponent {
 
     ngOnInit() {
 
-        this.broadcastService.subscribe("msal:loginFailure", (payload) => {
-            console.log("login failure " + JSON.stringify(payload));
+        this.broadcastService.subscribe('msal:loginFailure', (payload) => {
+            console.log('login failure ' + JSON.stringify(payload));
             this.loggedIn = false;
 
         });
 
-        this.broadcastService.subscribe("msal:loginSuccess", (payload) => {
-            console.log("login success " + JSON.stringify(payload));
+        this.broadcastService.subscribe('msal:loginSuccess', (payload) => {
+            console.log('login success ' + JSON.stringify(payload));
             this.user = this.msalService.getUser();
 
             if (this.user.idToken.hasOwnProperty('roles')) {
@@ -63,6 +62,7 @@ export class AppComponent {
 
     ngOnDestroy() {
         this.broadcastService.getMSALSubject().next(1);
+
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
